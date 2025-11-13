@@ -1,0 +1,137 @@
+services:
+  
+  postgres-db:
+    image: postgres:16-alpine
+    container_name: postgres-db
+    environment:
+      - POSTGRES_DB=esgaidadb
+      - POSTGRES_USER=esgaida
+      - POSTGRES_PASSWORD=Esgaida0930!
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - spring-cloud
+  
+  config-server:
+    build:
+      context: ./server/config
+      dockerfile: Dockerfile
+    container_name: config-server
+    ports:
+      - "8888:8888"
+    environment:
+      - SERVER_PORT=8888
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - JAVA_TOOL_OPTIONS=-Deureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/
+    networks:
+      - spring-cloud 
+
+  eureka-server:
+    build:
+      context: ./server/eureka
+      dockerfile: Dockerfile
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    depends_on:
+      - config-server
+    networks:
+      - spring-cloud
+
+  discovery-server:
+    build:
+      context: ./server/discovery
+      dockerfile: Dockerfile
+    container_name: discovery-server
+    ports:
+      - "8082:8080"
+    depends_on:
+      - eureka-server
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888/
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - JAVA_TOOL_OPTIONS=-Deureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/
+    networks:
+      - spring-cloud
+
+  common-service:
+    build:
+      context: ./service/common
+      dockerfile: Dockerfile
+    container_name: common-service
+    ports:
+      - "8083:8080"
+    depends_on:
+      - discovery-server
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888/
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - JAVA_TOOL_OPTIONS=-Deureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/
+    networks:
+      - spring-cloud
+
+  environment-service:
+    build:
+      context: ./service/environment
+      dockerfile: Dockerfile
+    container_name: environment-service
+    ports:
+      - "8084:8080"
+    depends_on:
+      - discovery-server
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888/
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - JAVA_TOOL_OPTIONS=-Deureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/
+    networks:
+      - spring-cloud
+
+  soccer-service:
+    build:
+      context: ./service/soccer
+      dockerfile: Dockerfile
+    container_name: soccer-service
+    ports:
+      - "8085:8080"
+    depends_on:
+      - discovery-server
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888/
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - JAVA_TOOL_OPTIONS=-Deureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/
+    networks:
+      - spring-cloud
+
+  user-service:
+    build:
+      context: ./service/user
+      dockerfile: Dockerfile
+    container_name: user-service
+    ports:
+      - "8086:8080"
+    depends_on:
+      - discovery-server
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888/
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - JAVA_TOOL_OPTIONS=-Deureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/
+    networks:
+      - spring-cloud
+
+  
+
+networks:
+  spring-cloud:
+    driver: bridge
+
+volumes:
+  postgres-data:
+
