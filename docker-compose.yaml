@@ -64,14 +64,14 @@ services:
       dockerfile: Dockerfile
     container_name: common-service
     ports:
-      - "8083:8080"
+      - "8101:8080"
     depends_on:
-      - discovery-server
+      - eureka-server
+      - config-server
     environment:
-      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888/
-      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
-      - JAVA_TOOL_OPTIONS=-Deureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/
+      - SPRING_PROFILES_ACTIVE=default
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+      - EUREKA_SERVER_URL=http://eureka:8761/eureka/
     networks:
       - spring-cloud
 

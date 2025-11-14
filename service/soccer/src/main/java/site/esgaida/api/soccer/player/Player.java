@@ -1,12 +1,13 @@
 package site.esgaida.api.soccer.player;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Data;
 import site.esgaida.api.soccer.team.Team;
 
@@ -16,7 +17,8 @@ import java.time.LocalDate;
 @Entity //MAPPING 생략
 @Table(name = "players") //테이블명 매핑
 public class Player {
-    @Id 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; //long 은 긴 숫자를 의미함
     private String playerUk;
     private String playerName;
@@ -32,7 +34,7 @@ public class Player {
     private Integer weight;
     private String teamUk;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
-     Team team;
+    private Team team;
 }

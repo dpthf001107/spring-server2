@@ -2,16 +2,16 @@ package site.esgaida.api.soccer.player;
 
 import java.util.List;
 
-import site.esgaida.api.soccer.common.Messenger;
-import site.esgaida.api.soccer.player.PlayerDTO;
+
+
 
 public interface PlayerService {
 
-    Messenger save(PlayerDTO player);
-    Messenger saveAll(List<PlayerDTO> players);
-    Messenger update(PlayerDTO player);
-    Messenger delete(String playerId);
-    Messenger findById(String playerId);
-    Messenger findAll();
+    public void save(PlayerModel player);
+    public void saveAll(List<PlayerModel> players);
+    public void update(PlayerModel player);
+    public void delete(String playerId);
+    public void findById(String playerId);
+    public void findAll();
     
 }

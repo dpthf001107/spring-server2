@@ -8,8 +8,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import site.esgaida.api.soccer.common.Messenger;
-import site.esgaida.api.soccer.player.PlayerDTO;
-import site.esgaida.api.soccer.player.PlayerService;
+
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,34 +20,40 @@ public class PlayerController {
     private final PlayerService playerService;
 
     @PostMapping("")
-    public Messenger save(PlayerDTO player) { 
-        return playerService.save(player);
+    public Messenger save(PlayerModel player) { 
+         playerService.save(player);
+         return null;
     }
 
     @PostMapping("/all")
-    public Messenger saveAll(List<PlayerDTO> players) {
-        return playerService.saveAll(players);
+    public Messenger saveAll(List<PlayerModel> players) {
+        playerService.saveAll(players);
+        return null;
         
     }
 
     @PutMapping("/{playerId}")
-    public Messenger update(PlayerDTO player) {
-        return playerService.update(player);
+    public Messenger update(PlayerModel player) {
+        playerService.update(player);
+        return null;
     }
 
     @DeleteMapping("/{playerId}")
     public Messenger delete(String playerId) {
-        return playerService.delete(playerId);
+        playerService.delete(playerId);
+        return null;
     }
 
     @GetMapping("/player/{playerId}")
     public Messenger findById(String playerId) {
-        return playerService.findById(playerId);
+        playerService.findById(playerId);
+        return null;
     }
 
     @GetMapping("")
     public Messenger findAll() {
-        return playerService.findAll();
+        playerService.findAll();
+        return null;
     }
     
 
