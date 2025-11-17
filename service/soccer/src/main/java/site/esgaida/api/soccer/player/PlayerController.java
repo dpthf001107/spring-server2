@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import site.esgaida.api.soccer.common.Messenger;
 
@@ -55,6 +56,23 @@ public class PlayerController {
         playerService.findAll();
         return null;
     }
-    
+
+    @GetMapping("/search")
+    public Messenger search(@RequestParam(required = false) String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return Messenger.builder()
+                .code(400)
+                .message("검색어를 입력해주세요")
+                .data(null)
+                .build();
+        }
+        
+        List<PlayerModel> players = playerService.searchByKeyword(keyword.trim());
+        return Messenger.builder()
+            .code(200)
+            .message("검색 완료")
+            .data(players)
+            .build();
+    }
 
 }

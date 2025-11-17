@@ -1,3 +1,60 @@
 spring:
   application:
     name: discovery
+  cloud:
+    compatibility-verifier:
+      enabled: false
+    gateway:
+      routes:
+        # Soccer Service 라우팅
+        - id: soccer-service
+          uri: lb://SOCCER
+          predicates:
+            - Path=/api/soccer/**
+          filters:
+            - StripPrefix=2
+        # Environment Service 라우팅
+        - id: environment-service
+          uri: lb://ENVIRONMENT
+          predicates:
+            - Path=/api/environment/**
+          filters:
+            - StripPrefix=2
+        # User Service 라우팅
+        - id: user-service
+          uri: lb://USER
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - StripPrefix=2
+        # Common Service 라우팅
+        - id: common-service
+          uri: lb://COMMON
+          predicates:
+            - Path=/api/common/**
+          filters:
+            - StripPrefix=2
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:3000"
+              - "http://ui-server:3000"
+              - "http://127.0.0.1:3000"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - PATCH
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
+
+eureka:
+  client:
+    registry-fetch-interval-seconds: 5
+    initial-instance-info-replication-interval-seconds: 5
+  instance:
+    lease-renewal-interval-in-seconds: 5

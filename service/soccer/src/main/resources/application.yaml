@@ -1,11 +1,14 @@
 spring:
   application:
     name: soccer
+  cloud:
+    compatibility-verifier:
+      enabled: false
   web:
     resources:
       static-locations: classpath:/static/,classpath:/templates/
   datasource:
-    url: jdbc:postgresql://postgres-db:5432/esgaidadb
+    url: jdbc:postgresql://db:5432/esgaidadb
     username: esgaida
     password: Esgaida0930!
     driver-class-name: org.postgresql.Driver

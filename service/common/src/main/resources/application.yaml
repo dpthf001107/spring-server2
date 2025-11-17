@@ -1,12 +1,21 @@
-
-
 spring:
   application:
     name: common
 
 eureka:
   client:
-    service-url:
-      defaultZone: ${EUREKA_SERVER_URL:http://eureka-server:8761/eureka/}
+    enabled: true
     register-with-eureka: true
     fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE:http://eureka-server:8761/eureka/}
+
+logging:
+  level:
+    com.netflix.eureka: DEBUG
+    com.netflix.discovery: DEBUG
+    org.springframework.cloud: DEBUG
+    org.springframework.cloud.netflix.eureka: DEBUG
+ 
+
+

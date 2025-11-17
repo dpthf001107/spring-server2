@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-    public class Messenger {
-        private int code;
-        private String message;
-    }
+public class Messenger {
+    private int code;
+    private String message;
+    private Object data;
+}

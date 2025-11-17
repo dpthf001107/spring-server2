@@ -1,8 +1,8 @@
 services:
   
-  postgres-db:
+  db:
     image: postgres:16-alpine
-    container_name: postgres-db
+    container_name: esgaida
     environment:
       - POSTGRES_DB=esgaidadb
       - POSTGRES_USER=esgaida
@@ -14,21 +14,6 @@ services:
     networks:
       - spring-cloud
   
-  config-server:
-    build:
-      context: ./server/config
-      dockerfile: Dockerfile
-    container_name: config-server
-    ports:
-      - "8888:8888"
-    environment:
-      - SERVER_PORT=8888
-      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
-      - JAVA_TOOL_OPTIONS=-Deureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/
-    networks:
-      - spring-cloud 
-
   eureka-server:
     build:
       context: ./server/eureka
@@ -36,18 +21,33 @@ services:
     container_name: eureka-server
     ports:
       - "8761:8761"
+    networks:
+      - spring-cloud
+
+  config-server:
+    build:
+      context: ./server/config
+      dockerfile: Dockerfile
+    container_name: config-server
+    ports:
+      - "8888:8888"
     depends_on:
-      - config-server
+      - eureka-server
+    environment:
+      - SERVER_PORT=8888
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - JAVA_TOOL_OPTIONS=-Deureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/
     networks:
       - spring-cloud
 
   discovery-server:
     build:
-      context: ./server/discovery
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./server/discovery/Dockerfile
     container_name: discovery-server
     ports:
-      - "8082:8080"
+      - "8080:8080"
     depends_on:
       - eureka-server
     environment:
@@ -70,8 +70,10 @@ services:
       - config-server
     environment:
       - SPRING_PROFILES_ACTIVE=default
-      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
-      - EUREKA_SERVER_URL=http://eureka:8761/eureka/
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888/
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - JAVA_TOOL_OPTIONS=-Deureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/
     networks:
       - spring-cloud
 
@@ -94,18 +96,21 @@ services:
 
   soccer-service:
     build:
-      context: ./service/soccer
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./service/soccer/Dockerfile
     container_name: soccer-service
     ports:
       - "8085:8080"
     depends_on:
+      - db
+      - eureka-server
       - discovery-server
     environment:
       - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888/
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
       - JAVA_TOOL_OPTIONS=-Deureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/esgaidadb
     networks:
       - spring-cloud
 
@@ -123,6 +128,20 @@ services:
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
       - JAVA_TOOL_OPTIONS=-Deureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/
+    networks:
+      - spring-cloud
+
+  ui-server:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ui-server
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=http://localhost:8080
+    restart: unless-stopped
     networks:
       - spring-cloud
 
