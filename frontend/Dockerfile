@@ -9,7 +9,7 @@ FROM base AS deps
 WORKDIR /app
 
 # 패키지 파일 복사
-COPY package.json pnpm-lock.yaml* ./
+COPY ./frontend/package.json ./frontend/pnpm-lock.yaml* ./
 
 # 의존성 설치
 RUN pnpm install --frozen-lockfile
@@ -20,7 +20,7 @@ WORKDIR /app
 
 # 의존성 복사
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+COPY ./frontend .
 
 # Next.js 빌드
 ENV NEXT_TELEMETRY_DISABLED 1

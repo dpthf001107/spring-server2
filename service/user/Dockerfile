@@ -4,7 +4,7 @@ VOLUME /tmp
 
 RUN apk update && apk add --no-cache curl
 
-COPY ./build/libs/*.jar user-service.jar
+COPY ./service/user/build/libs/*.jar user-service.jar
 
 ENTRYPOINT ["java", "-jar", "/user-service.jar"]
 

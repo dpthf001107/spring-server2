@@ -4,7 +4,7 @@ VOLUME /tmp
 
 RUN apk update && apk add --no-cache curl
 
-COPY ./build/libs/*.jar eureka-server.jar
+COPY ./server/eureka/build/libs/*.jar eureka-server.jar
 
 ENTRYPOINT ["java", "-jar", "/eureka-server.jar"]
 

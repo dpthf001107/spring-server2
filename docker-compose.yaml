@@ -2,11 +2,11 @@ services:
   
   db:
     image: postgres:16-alpine
-    container_name: esgaida
+    container_name: aifixr
     environment:
-      - POSTGRES_DB=esgaidadb
-      - POSTGRES_USER=esgaida
-      - POSTGRES_PASSWORD=Esgaida0930!
+      - POSTGRES_DB=aifixrdb
+      - POSTGRES_USER=aifixr
+      - POSTGRES_PASSWORD=Aifixr0930!
     ports:
       - "5432:5432"
     volumes:
@@ -16,8 +16,8 @@ services:
   
   eureka-server:
     build:
-      context: ./server/eureka
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./server/eureka/Dockerfile
     container_name: eureka-server
     ports:
       - "8761:8761"
@@ -26,8 +26,8 @@ services:
 
   config-server:
     build:
-      context: ./server/config
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./server/config/Dockerfile
     container_name: config-server
     ports:
       - "8888:8888"
@@ -60,8 +60,8 @@ services:
 
   common-service:
     build:
-      context: ./service/common
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./service/common/Dockerfile
     container_name: common-service
     ports:
       - "8101:8080"
@@ -79,8 +79,8 @@ services:
 
   environment-service:
     build:
-      context: ./service/environment
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./service/environment/Dockerfile
     container_name: environment-service
     ports:
       - "8084:8080"
@@ -110,14 +110,14 @@ services:
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
       - JAVA_TOOL_OPTIONS=-Deureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/esgaidadb
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/aifixrdb
     networks:
       - spring-cloud
 
   user-service:
     build:
-      context: ./service/user
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./service/user/Dockerfile
     container_name: user-service
     ports:
       - "8086:8080"
@@ -133,8 +133,8 @@ services:
 
   ui-server:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./frontend/Dockerfile
     container_name: ui-server
     ports:
       - "3000:3000"
